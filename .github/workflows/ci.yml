@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    name: PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {php: '8.2', laravel: '12.*', testbench: '10.*'}
+          - {php: '8.3', laravel: '12.*', testbench: '10.*'}
+          - {php: '8.3', laravel: '13.*', testbench: '11.*'}
+          - {php: '8.4', laravel: '13.*', testbench: '11.*'}
+          - {php: '8.5', laravel: '13.*', testbench: '11.*'}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - run: composer require "illuminate/support:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+
+      - uses: ramsey/composer-install@v3
+        with:
+          dependency-versions: highest
+
+      - run: vendor/bin/pest
+
+  quality:
+    name: Style and static analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - uses: ramsey/composer-install@v3
+
+      - run: vendor/bin/pint --test
+
+      - run: vendor/bin/phpstan analyse --memory-limit=1G --no-progress

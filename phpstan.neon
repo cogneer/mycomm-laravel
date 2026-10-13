@@ -1,0 +1,10 @@
+parameters:
+    level: 8
+    paths:
+        - src
+        - config
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        # Laravel's env() and config helpers are untyped at this level; the provider narrows what it reads.
+        - identifier: larastan.noEnvCallsOutsideOfConfig
+          reportUnmatched: false

@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Runs Composer and the PHP tooling in a container, so nothing PHP has to be installed on the host.
+#
+#   ./dev composer install      ./dev test [pest args]     ./dev stan      ./dev lint | fix     ./dev check
+#   ./dev php <args>            any php command
+#
+# While mycomm/mycomm-php is developed next to this package (../mycomm-php), that checkout is used instead
+# of the released version. MYCOMM_PHP_IMAGE picks the image (default composer:2).
+set -euo pipefail
+cd "$(dirname "$0")"
+
+image="${MYCOMM_PHP_IMAGE:-composer:2}"
+mounts=(-v "$PWD":/app)
+env=(-e COMPOSER_HOME=/tmp/composer -e HOME=/tmp)
+
+if [ -d ../mycomm-php ]; then
+    mounts+=(-v "$(cd ../mycomm-php && pwd)":/mycomm-php)
+    env+=(-e COMPOSER=composer.dev.json)
+    # composer.json plus a path repository for the sibling checkout; never committed.
+    docker run --rm -u "$(id -u):$(id -g)" "${mounts[@]}" -w /app --entrypoint "" "$image" php -r '
+        $json = json_decode(file_get_contents("composer.json"), true);
+        $json["repositories"] = [["type" => "path", "url" => "/mycomm-php", "options" => ["symlink" => true, "versions" => ["mycomm/mycomm-php" => "0.1.0"]]]];
+        file_put_contents("composer.dev.json", json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n");
+    '
+fi
+
+run() {
+    docker run --rm -u "$(id -u):$(id -g)" "${env[@]}" "${mounts[@]}" -w /app --entrypoint "" "$image" "$@"
+}
+
+cmd="${1:-help}"
+shift || true
+
+case "$cmd" in
+    composer) run composer "$@" ;;
+    php) run php "$@" ;;
+    test) run php vendor/bin/pest "$@" ;;
+    stan) run php vendor/bin/phpstan analyse --memory-limit=1G "$@" ;;
+    lint) run php vendor/bin/pint --test "$@" ;;
+    fix) run php vendor/bin/pint "$@" ;;
+    check)
+        "$0" lint
+        "$0" stan
+        "$0" test
+        ;;
+    *) sed -n '2,8p' "$0" | sed 's/^# \{0,1\}//' ;;
+esac
