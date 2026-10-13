@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use MyComm\Laravel\Events\WebhookReceived;
 use MyComm\Laravel\Http\Middleware\VerifyWebhookSignature;
+use Throwable;
 
 /**
  * Turns a verified MyComm webhook into Laravel events and acknowledges it.
@@ -27,13 +28,26 @@ final class WebhookController
     {
         $event = VerifyWebhookSignature::event($request);
 
+        $key = 'mycomm:webhook:'.$event->id;
+        $deduplicate = (bool) $config->get('mycomm.webhook.deduplicate', true);
+
         // add() is atomic: of two deliveries of one event that race, only one dispatches.
-        if ($config->get('mycomm.webhook.deduplicate', true) && ! $cache->add('mycomm:webhook:'.$event->id, true, self::REMEMBER_SECONDS)) {
+        if ($deduplicate && ! $cache->add($key, true, self::REMEMBER_SECONDS)) {
             return new Response('', 204);
         }
 
-        $events->dispatch($event);
-        $events->dispatch(new WebhookReceived($event));
+        try {
+            $events->dispatch($event);
+            $events->dispatch(new WebhookReceived($event));
+        } catch (Throwable $e) {
+            // A listener failed, so this answers with an error and MyComm delivers the event again. That
+            // delivery must not be taken for a duplicate, or the event would be lost.
+            if ($deduplicate) {
+                $cache->forget($key);
+            }
+
+            throw $e;
+        }
 
         return new Response('', 204);
     }

@@ -69,6 +69,23 @@ it('dispatches a repeated delivery once', function () {
     Event::assertDispatchedTimes(MessageReceived::class, 1);
 });
 
+it('handles the retry of a delivery whose listener failed', function () {
+    $attempts = 0;
+    Event::listen(MessageReceived::class, function () use (&$attempts): void {
+        if (++$attempts === 1) {
+            throw new RuntimeException('The database is down.');
+        }
+    });
+    $webhook = FakeWebhook::make('message.received', secret: TestCase::SECRET);
+
+    deliver($this, $webhook->payload, $webhook->signature)->assertStatus(500);
+    deliver($this, $webhook->payload, $webhook->signature)->assertNoContent();
+    deliver($this, $webhook->payload, $webhook->signature)->assertNoContent();
+
+    // The failed attempt did not mark the event as seen; the successful one did.
+    expect($attempts)->toBe(2);
+});
+
 it('dispatches every delivery when de-duplication is off', function () {
     config(['mycomm.webhook.deduplicate' => false]);
     Event::fake([MessageReceived::class]);

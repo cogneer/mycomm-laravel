@@ -6,6 +6,11 @@ All notable changes to this package are listed here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- A webhook whose listener threw is no longer remembered as handled, so the delivery MyComm retries is
+  dispatched instead of being skipped as a duplicate.
+
 ## [0.1.0] - 2026-10-14
 
 First release, for `mycomm/mycomm-php` 0.1 and Laravel 12 and 13.

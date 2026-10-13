@@ -103,7 +103,9 @@ Things to know:
 
 - **Queue your listeners** (`ShouldQueue`). MyComm waits 10 seconds for the answer and retries otherwise.
 - **Events can arrive out of order.** Never move a message status backwards.
-- **Duplicates** are filtered by event id for 7 days using your default cache store. If that store is
+- **Duplicates** are filtered by event id for 7 days using your default cache store. An event counts as
+  handled only when no synchronous listener threw; a queued listener that fails later is retried by your
+  queue, not by MyComm. If that store is
   `array` or per-process, switch it or set `MYCOMM_WEBHOOK_DEDUPLICATE=false` and de-duplicate yourself.
 - **Rotating the secret:** set `MYCOMM_WEBHOOK_SECRET=new-secret,old-secret` before you rotate, and drop the
   old one a day later.
