@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\TestResponse;
 use MyComm\Exceptions\MyCommException;
@@ -84,6 +85,22 @@ it('handles the retry of a delivery whose listener failed', function () {
 
     // The failed attempt did not mark the event as seen; the successful one did.
     expect($attempts)->toBe(2);
+});
+
+it('asks for a later delivery while another request is still handling the event', function () {
+    Event::fake([MessageReceived::class]);
+    $webhook = FakeWebhook::make('message.received', secret: TestCase::SECRET);
+    $key = 'mycomm:webhook:'.json_decode($webhook->payload, true)['id'];
+    Cache::put($key, 'handling', 300);
+
+    // Acknowledging here would lose the event if the request that is handling it fails.
+    deliver($this, $webhook->payload, $webhook->signature)->assertStatus(503)->assertHeader('Retry-After', '60');
+    Event::assertNotDispatched(MessageReceived::class);
+
+    Cache::forget($key);
+    deliver($this, $webhook->payload, $webhook->signature)->assertNoContent();
+    Event::assertDispatchedTimes(MessageReceived::class, 1);
+    expect(Cache::get($key))->toBe('handled');
 });
 
 it('dispatches every delivery when de-duplication is off', function () {
