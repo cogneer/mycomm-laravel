@@ -28,7 +28,7 @@ jobs:
           php-version: ${{ matrix.php }}
           coverage: none
 
-      - run: composer require "illuminate/support:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+      - run: composer require "illuminate/support:${{ matrix.laravel }}" "illuminate/notifications:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
 
       - uses: ramsey/composer-install@v3
         with:

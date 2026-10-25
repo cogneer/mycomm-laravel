@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\TestResponse;
+use MyComm\Enums\MessageStatus;
 use MyComm\Exceptions\MyCommException;
 use MyComm\Laravel\Events\WebhookReceived;
 use MyComm\Laravel\Tests\TestCase;
@@ -33,7 +34,7 @@ it('dispatches the typed event of a signed delivery', function () {
 
     deliver($this, $webhook->payload, $webhook->signature)->assertNoContent();
 
-    Event::assertDispatched(MessageDelivered::class, fn (MessageDelivered $event) => $event->data->message->status === 'delivered');
+    Event::assertDispatched(MessageDelivered::class, fn (MessageDelivered $event) => $event->data->message->status === MessageStatus::Delivered);
     Event::assertDispatched(WebhookReceived::class, fn (WebhookReceived $received) => $received->event instanceof MessageDelivered);
 });
 

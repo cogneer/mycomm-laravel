@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use MyComm\Client;
+use MyComm\Enums\MessageStatus;
 use MyComm\Exceptions\MyCommException;
 use MyComm\Http\Request;
 use MyComm\Laravel\Facades\MyComm;
@@ -31,7 +32,7 @@ it('reaches every resource through the facade', function () {
         ->and(MyComm::client())->toBe(app(Client::class))
         ->and(app(MyCommManager::class)->contacts())->toBe(app(Client::class)->contacts);
 
-    expect(fn () => MyComm::campaigns())->toThrow(BadMethodCallException::class, 'MyComm has no resource named campaigns.');
+    expect(fn () => MyComm::nothing())->toThrow(BadMethodCallException::class, 'MyComm has no resource named nothing.');
 });
 
 it('documents every resource of the client on the facade', function () {
@@ -66,8 +67,8 @@ it('swaps in a fake for the facade and for injection alike', function () {
     $viaFacade = MyComm::messages()->send(to: '+923001234567', body: 'Hi');
     $viaContainer = app(Client::class)->messages->send(to: '+923331112222', body: 'Hi');
 
-    expect($viaFacade->status)->toBe('queued')
-        ->and($viaContainer->status)->toBe('queued');
+    expect($viaFacade->status)->toBe(MessageStatus::Queued)
+        ->and($viaContainer->status)->toBe(MessageStatus::Queued);
     $fake->assertCalledTimes('messages.send', 2)
         ->assertCalled('messages.send', fn (Request $request) => $request->json['to'] === '+923331112222');
 });
