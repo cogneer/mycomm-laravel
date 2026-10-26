@@ -6,6 +6,7 @@ namespace MyComm\Laravel;
 
 use BadMethodCallException;
 use MyComm\Client;
+use MyComm\VerifyResult;
 
 /**
  * What the `MyComm` facade talks to: each resource of the client as a method.
@@ -19,6 +20,14 @@ final class MyCommManager
     public function client(): Client
     {
         return $this->client;
+    }
+
+    /**
+     * Checks the key and, with a number, dry-runs a send. Sends nothing. See `Client::verify()`.
+     */
+    public function verify(?string $to = null, ?string $inboxId = null): VerifyResult
+    {
+        return $this->client->verify($to, $inboxId);
     }
 
     /**

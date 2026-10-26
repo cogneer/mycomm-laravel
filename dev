@@ -19,7 +19,8 @@ if [ -d ../mycomm-php ]; then
     # composer.json plus a path repository for the sibling checkout; never committed.
     docker run --rm -u "$(id -u):$(id -g)" "${mounts[@]}" -w /app --entrypoint "" "$image" php -r '
         $json = json_decode(file_get_contents("composer.json"), true);
-        $json["repositories"] = [["type" => "path", "url" => "/mycomm-php", "options" => ["symlink" => true, "versions" => ["mycomm/mycomm-php" => "0.1.0"]]]];
+        preg_match("/SDK = \x27([^\x27]+)\x27/", file_get_contents("/mycomm-php/src/Version.php"), $version);
+        $json["repositories"] = [["type" => "path", "url" => "/mycomm-php", "options" => ["symlink" => true, "versions" => ["mycomm/mycomm-php" => $version[1]]]]];
         file_put_contents("composer.dev.json", json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n");
     '
 fi

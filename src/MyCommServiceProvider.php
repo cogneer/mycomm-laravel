@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace MyComm\Laravel;
 
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Notifications\ChannelManager;
 use Illuminate\Routing\Route as RouteInstance;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use MyComm\Client;
 use MyComm\Exceptions\MyCommException;
+use MyComm\Laravel\Console\VerifyCommand;
 use MyComm\Laravel\Http\Controllers\WebhookController;
 use MyComm\Laravel\Http\Middleware\VerifyWebhookSignature;
+use MyComm\Laravel\Notifications\MyCommChannel;
 
 final class MyCommServiceProvider extends ServiceProvider
 {
@@ -32,6 +35,7 @@ final class MyCommServiceProvider extends ServiceProvider
                 baseUrl: (string) ($config['base_url'] ?? Client::DEFAULT_BASE_URL),
                 maxRetries: (int) ($config['max_retries'] ?? 2),
                 timeout: (float) ($config['timeout'] ?? 30.0),
+                validate: (bool) ($config['validate'] ?? true),
             );
         });
 
@@ -40,6 +44,13 @@ final class MyCommServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->commands([VerifyCommand::class]);
+
+        // `via()` may return 'mycomm' once the notifications component is loaded.
+        $this->callAfterResolving(ChannelManager::class, function (ChannelManager $manager, Application $app): void {
+            $manager->extend('mycomm', fn (): MyCommChannel => $app->make(MyCommChannel::class));
+        });
+
         if ($this->app->runningInConsole()) {
             $this->publishes([__DIR__.'/../config/mycomm.php' => $this->app->configPath('mycomm.php')], 'mycomm-config');
         }

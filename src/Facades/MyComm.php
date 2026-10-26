@@ -12,9 +12,14 @@ use MyComm\Testing\MyCommFake;
 /**
  * @method static \MyComm\Client client()
  * @method static \MyComm\Client forAccount(string $accountId)
+ * @method static \MyComm\VerifyResult verify(?string $to = null, ?string $inboxId = null)
  * @method static \MyComm\Resources\Account account()
  * @method static \MyComm\Resources\ApiKeys apiKeys()
+ * @method static \MyComm\Resources\AutomationRules automationRules()
+ * @method static \MyComm\Resources\AutomationRuns automationRuns()
+ * @method static \MyComm\Resources\Campaigns campaigns()
  * @method static \MyComm\Resources\Channels channels()
+ * @method static \MyComm\Resources\ConnectSessions connectSessions()
  * @method static \MyComm\Resources\ConsentEvents consentEvents()
  * @method static \MyComm\Resources\ContactFields contactFields()
  * @method static \MyComm\Resources\Contacts contacts()
@@ -31,6 +36,7 @@ use MyComm\Testing\MyCommFake;
  * @method static \MyComm\Resources\SmartLists smartLists()
  * @method static \MyComm\Resources\Stats stats()
  * @method static \MyComm\Resources\Suppressions suppressions()
+ * @method static \MyComm\Resources\Templates templates()
  * @method static \MyComm\Resources\WebhookDeliveries webhookDeliveries()
  * @method static \MyComm\Resources\WebhookEndpoints webhookEndpoints()
  *

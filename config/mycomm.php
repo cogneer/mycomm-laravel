@@ -26,6 +26,13 @@ return [
     */
     'timeout' => (float) env('MYCOMM_TIMEOUT', 30),
 
+    /*
+    | Check the arguments of each call against the API's documented rules before sending (a number out of range,
+    | no recipient, ...) and throw MyComm\Exceptions\InvalidArgumentException naming the field. Turn it off only if
+    | the API has relaxed a rule your version of the SDK does not know yet.
+    */
+    'validate' => (bool) env('MYCOMM_VALIDATE', true),
+
     'webhook' => [
 
         /*
