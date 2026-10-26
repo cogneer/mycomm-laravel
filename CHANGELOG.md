@@ -4,7 +4,7 @@ All notable changes to this package are listed here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the package follows
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - Unreleased
+## [1.0.0] - 2026-10-26
 
 The first stable release, for `mycomm/mycomm-php` 1.0 and the frozen API `1.0.0`. From here the package follows semantic
 versioning: `1.x` releases only add. 0.2.0 was never released; its changes are here.
