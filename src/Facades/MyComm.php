@@ -12,7 +12,7 @@ use MyComm\Testing\MyCommFake;
 /**
  * @method static \MyComm\Client client()
  * @method static \MyComm\Client forAccount(string $accountId)
- * @method static \MyComm\VerifyResult verify(?string $to = null, ?string $inboxId = null)
+ * @method static \MyComm\VerifyResult verify(?string $to = null, ?string $lineId = null)
  * @method static \MyComm\Resources\Account account()
  * @method static \MyComm\Resources\ApiKeys apiKeys()
  * @method static \MyComm\Resources\AutomationRules automationRules()
@@ -28,7 +28,7 @@ use MyComm\Testing\MyCommFake;
  * @method static \MyComm\Resources\Exports exports()
  * @method static \MyComm\Resources\Groups groups()
  * @method static \MyComm\Resources\Imports imports()
- * @method static \MyComm\Resources\Inboxes inboxes()
+ * @method static \MyComm\Resources\Lines lines()
  * @method static \MyComm\Resources\Media media()
  * @method static \MyComm\Resources\Messages messages()
  * @method static \MyComm\Resources\PairingCodes pairingCodes()

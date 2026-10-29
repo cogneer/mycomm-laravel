@@ -43,6 +43,15 @@ it('checks only the key without a number and says how to test a send', function 
     $fake->assertNotCalled('messages.send');
 });
 
+it('dry-runs the send from the line given with --line', function () {
+    $fake = MyComm::fake();
+
+    $this->artisan('mycomm:verify', ['--to' => '+923001234567', '--line' => '0198f3a2-7c41-7e0b-9d52-6a1f3b8c4e12'])
+        ->assertSuccessful();
+
+    $fake->assertCalled('messages.send', fn ($request) => ($request->json['line_id'] ?? null) === '0198f3a2-7c41-7e0b-9d52-6a1f3b8c4e12');
+});
+
 it('verifies through the facade', function () {
     MyComm::fake();
 

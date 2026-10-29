@@ -13,15 +13,15 @@ use MyComm\Client;
  */
 final class VerifyCommand extends Command
 {
-    protected $signature = 'mycomm:verify {--to= : A number you control, to dry-run a send to} {--inbox= : The inbox to send from, when the key can use several}';
+    protected $signature = 'mycomm:verify {--to= : A number you control, to dry-run a send to} {--line= : The line to send from, when the key can use several}';
 
     protected $description = 'Check the MyComm API key and, with --to, that a message would be accepted (nothing is sent)';
 
     public function handle(Client $client): int
     {
         $to = $this->option('to');
-        $inbox = $this->option('inbox');
-        $result = $client->verify(is_string($to) && $to !== '' ? $to : null, is_string($inbox) && $inbox !== '' ? $inbox : null);
+        $line = $this->option('line');
+        $result = $client->verify(is_string($to) && $to !== '' ? $to : null, is_string($line) && $line !== '' ? $line : null);
 
         foreach ($result->checks as $check) {
             $this->line(($check['ok'] ? '<info>PASS</info>' : '<error>FAIL</error>').'  '.$check['name'].': '.$check['message']);

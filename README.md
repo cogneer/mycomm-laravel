@@ -13,6 +13,9 @@ Requires PHP 8.2+ and Laravel 12 or 13. The guide for this package, with the API
 composer require mycomm/mycomm-laravel
 ```
 
+Release status: `1.0.x` is published on Packagist. `2.0.0` (lines replace inboxes, for `mycomm/mycomm-php` 2.0) is not
+published yet; until it is, `composer require` installs `1.0.x`.
+
 ```dotenv
 MYCOMM_API_KEY=mc_live_...
 MYCOMM_WEBHOOK_SECRET=...        # only if you receive webhooks
@@ -38,6 +41,8 @@ Check the setup once it is in place:
 ```bash
 php artisan mycomm:verify --to=+923001234567
 ```
+
+Add `--line=<line id>` when the key can use several lines.
 
 It checks the key and dry-runs a message to that number, sends nothing, prints each check as `PASS` or `FAIL` with the
 API's own message, and exits with code 1 when one fails, so it can sit in a deploy script. See
@@ -119,7 +124,7 @@ $customer->notify(new OrderShipped($order));
 ```
 
 The number comes from `routeNotificationForMyComm()` on the notifiable, else its `phone` attribute; a notifiable with no
-number is skipped. `MyCommMessage` also has `contactId()`, `inbox()`, `template()`, `lane()`, `metadata()`, `sendAfter()`,
+number is skipped. `MyCommMessage` also has `contactId()`, `line()`, `template()`, `lane()`, `metadata()`, `sendAfter()`,
 `expiresIn()` and `dryRun()`; it takes the same values as `messages->send()`.
 
 The notification's id is sent as the `Idempotency-Key`, so a queued notification that is retried cannot send twice. When

@@ -25,9 +25,9 @@ final class MyCommManager
     /**
      * Checks the key and, with a number, dry-runs a send. Sends nothing. See `Client::verify()`.
      */
-    public function verify(?string $to = null, ?string $inboxId = null): VerifyResult
+    public function verify(?string $to = null, ?string $lineId = null): VerifyResult
     {
-        return $this->client->verify($to, $inboxId);
+        return $this->client->verify($to, $lineId);
     }
 
     /**
