@@ -23,7 +23,7 @@ final class MyCommMessage
 
     private ?string $contactId = null;
 
-    private ?string $inboxId = null;
+    private ?string $lineId = null;
 
     private ?string $body = null;
 
@@ -73,10 +73,10 @@ final class MyCommMessage
         return $this;
     }
 
-    /** The inbox to send from; leave out when the key can use only one. */
-    public function inbox(string $inboxId): self
+    /** The line to send from; leave out when the key can use only one. */
+    public function line(string $lineId): self
     {
-        $this->inboxId = $inboxId;
+        $this->lineId = $lineId;
 
         return $this;
     }
@@ -177,7 +177,7 @@ final class MyCommMessage
         return array_filter([
             'to' => $this->to,
             'contact_id' => $this->contactId,
-            'inbox_id' => $this->inboxId,
+            'line_id' => $this->lineId,
             'body' => $this->body,
             'template_id' => $this->templateId,
             'variables' => $this->variables,

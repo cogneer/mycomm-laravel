@@ -109,6 +109,16 @@ it('builds the arguments of a send and leaves out what was not set', function ()
     ]);
 });
 
+it('sends from the line it is given', function () {
+    $message = MyCommMessage::create('Hi')->to('+923001234567')->line('0198f3a2-7c41-7e0b-9d52-6a1f3b8c4e12');
+
+    expect($message->toArray())->toBe([
+        'to' => '+923001234567',
+        'line_id' => '0198f3a2-7c41-7e0b-9d52-6a1f3b8c4e12',
+        'body' => 'Hi',
+    ]);
+});
+
 it('says what a notification is missing', function () {
     MyComm::fake();
     $notification = new class extends Notification
