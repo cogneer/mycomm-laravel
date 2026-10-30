@@ -11,7 +11,7 @@ use MyComm\Testing\MyCommFake;
 
 /**
  * @method static \MyComm\Client client()
- * @method static \MyComm\Client forAccount(string $accountId)
+ * @method static \MyComm\Client forLine(string $lineId)
  * @method static \MyComm\VerifyResult verify(?string $to = null, ?string $lineId = null)
  * @method static \MyComm\Resources\Account account()
  * @method static \MyComm\Resources\ApiKeys apiKeys()
@@ -19,7 +19,6 @@ use MyComm\Testing\MyCommFake;
  * @method static \MyComm\Resources\AutomationRuns automationRuns()
  * @method static \MyComm\Resources\Campaigns campaigns()
  * @method static \MyComm\Resources\Channels channels()
- * @method static \MyComm\Resources\ConnectSessions connectSessions()
  * @method static \MyComm\Resources\ConsentEvents consentEvents()
  * @method static \MyComm\Resources\ContactFields contactFields()
  * @method static \MyComm\Resources\Contacts contacts()
@@ -29,6 +28,7 @@ use MyComm\Testing\MyCommFake;
  * @method static \MyComm\Resources\Groups groups()
  * @method static \MyComm\Resources\Imports imports()
  * @method static \MyComm\Resources\Lines lines()
+ * @method static \MyComm\Resources\Links links()
  * @method static \MyComm\Resources\Media media()
  * @method static \MyComm\Resources\Messages messages()
  * @method static \MyComm\Resources\PairingCodes pairingCodes()
@@ -53,7 +53,9 @@ final class MyComm extends Facade
      */
     public static function fake(): MyCommFake
     {
-        $fake = new MyCommFake;
+        // A partner key in the configuration gets a partner fake, so code that branches on the key kind runs as in production.
+        $configured = self::getFacadeApplication()?->make('config')->get('mycomm.api_key');
+        $fake = new MyCommFake(is_string($configured) && str_starts_with($configured, 'mc_partner_') ? 'mc_partner_fake' : 'mc_live_fake');
 
         self::getFacadeApplication()?->instance(Client::class, $fake->client());
         self::swap(new MyCommManager($fake->client()));

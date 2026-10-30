@@ -42,7 +42,8 @@ Check the setup once it is in place:
 php artisan mycomm:verify --to=+923001234567
 ```
 
-Add `--line=<line id>` when the key can use several lines.
+Add `--line=<line id>` when the key can use several lines. A partner key (`mc_partner_...`) is checked on the partner
+API, and its send is dry-run through the line given with `--line`, which it needs.
 
 It checks the key and dry-runs a message to that number, sends nothing, prints each check as `PASS` or `FAIL` with the
 API's own message, and exits with code 1 when one fails, so it can sit in a deploy script. See
@@ -79,8 +80,33 @@ final class SendShippingNotice
 
 Every resource of the SDK is a method on the facade (`MyComm::contacts()`, `MyComm::webhookEndpoints()`,
 `MyComm::partner()`); what you can call on them is described in the
-[SDK's README](https://packagist.org/packages/mycomm/mycomm-php). Partners act for a managed account with
-`MyComm::forAccount($accountId)->messages->send(...)`.
+[SDK's README](https://packagist.org/packages/mycomm/mycomm-php). With a partner key, send as one of your lines
+with `MyComm::forLine($lineId)->messages->send(...)`; `MyComm::partner()->lines` creates and follows the lines.
+
+## Connecting your user's phone
+
+The Blade component renders the [`@mycomm/connect`](https://www.npmjs.com/package/@mycomm/connect) widget with a hosted
+link made for this page view:
+
+```blade
+<x-mycomm-connect :line="$tenant->mycomm_line_id" purpose="connect" />
+```
+
+It creates the link when the page renders, with `return_url` set to the current URL and `allowed_origins` to this
+page's origin, so the hosted page returns here and reports its outcome only to this page. `purpose` is `connect`
+(default), `add_channel`, `replace_device` (with `:replaces-device="$deviceId"`, the phone being replaced), `manage` or
+`claim`. A partner key needs `:line`, one of its lines; an account key may leave it out when the key
+reaches a single line. Every other attribute (`mode`, `label`, `height`, `timeout`, `class`) goes to the element.
+
+A new link is made on every render, so mind the API's limits: at most 20 open links per line and 60 new ones per line per
+hour, and `return_url` must be `https`. When MyComm refuses the link or cannot be reached, the page still renders: the
+element comes without a `url`, so the widget shows its own `missing-url` error, and the reason is logged as a warning
+("MyComm did not create the connect link: ..."). A missing `:line` with a partner key is a mistake in your template and
+still throws.
+
+Load the widget's script on the page (see its README for the pinned CDN tag with its integrity hash), and listen for
+`mycomm-connect:completed`; confirm on your server with `MyComm::partner()->lines->status($lineId)` or the `line.*`
+webhooks. The link is a credential for the line: the component never caches or logs it, and neither should you.
 
 In a queued job, give the send an idempotency key derived from your own data, so a retried job cannot send
 twice:
@@ -223,7 +249,8 @@ it('copes with a customer who opted out', function () {
 });
 ```
 
-`MyComm::fake()` replaces the client for the facade and for injection. Nothing reaches the network; every
+`MyComm::fake()` replaces the client for the facade and for injection, `<x-mycomm-connect>` included (its link is
+`partner.lines.links.create`, or `lines.links.create` with an account key). Nothing reaches the network; every
 operation answers with the example of the API reference unless you stub it.
 
 To test your own listener end to end, post a signed delivery to the route:

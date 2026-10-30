@@ -31,11 +31,11 @@ final class MyCommManager
     }
 
     /**
-     * A client that acts as one managed account. For partner keys.
+     * A client whose `/v1` calls act on one of your lines (`MyComm-Line`). For partner keys. See `Client::forLine()`.
      */
-    public function forAccount(string $accountId): Client
+    public function forLine(string $lineId): Client
     {
-        return $this->client->forAccount($accountId);
+        return $this->client->forLine($lineId);
     }
 
     /**
