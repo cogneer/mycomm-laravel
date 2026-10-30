@@ -11,7 +11,7 @@ use MyComm\Testing\MyCommFake;
 
 /**
  * @method static \MyComm\Client client()
- * @method static \MyComm\Client forAccount(string $accountId)
+ * @method static \MyComm\Client forLine(string $lineId)
  * @method static \MyComm\VerifyResult verify(?string $to = null, ?string $lineId = null)
  * @method static \MyComm\Resources\Account account()
  * @method static \MyComm\Resources\ApiKeys apiKeys()
@@ -19,7 +19,6 @@ use MyComm\Testing\MyCommFake;
  * @method static \MyComm\Resources\AutomationRuns automationRuns()
  * @method static \MyComm\Resources\Campaigns campaigns()
  * @method static \MyComm\Resources\Channels channels()
- * @method static \MyComm\Resources\ConnectSessions connectSessions()
  * @method static \MyComm\Resources\ConsentEvents consentEvents()
  * @method static \MyComm\Resources\ContactFields contactFields()
  * @method static \MyComm\Resources\Contacts contacts()
@@ -29,6 +28,7 @@ use MyComm\Testing\MyCommFake;
  * @method static \MyComm\Resources\Groups groups()
  * @method static \MyComm\Resources\Imports imports()
  * @method static \MyComm\Resources\Lines lines()
+ * @method static \MyComm\Resources\Links links()
  * @method static \MyComm\Resources\Media media()
  * @method static \MyComm\Resources\Messages messages()
  * @method static \MyComm\Resources\PairingCodes pairingCodes()

@@ -52,12 +52,14 @@ it('documents every resource of the client on the facade', function () {
     expect($documented)->toBe($actual);
 });
 
-it('acts as a managed account through the facade', function () {
+it('acts on a partner line through the facade', function () {
     $fake = MyComm::fake();
 
-    MyComm::forAccount('acc-1')->messages->send(to: '+923001234567', body: 'Hi');
+    MyComm::forLine('line-1')->messages->send(to: '+923001234567', body: 'Hi');
+    MyComm::partner()->lines->status('line-1');
 
-    $fake->assertCalled('messages.send', fn (Request $request) => $request->header('MyComm-Account') === 'acc-1');
+    $fake->assertCalled('messages.send', fn (Request $request) => $request->header('MyComm-Line') === 'line-1')
+        ->assertCalled('partner.lines.status', fn (Request $request) => $request->header('MyComm-Line') === null);
 });
 
 it('swaps in a fake for the facade and for injection alike', function () {

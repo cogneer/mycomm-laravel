@@ -9,12 +9,14 @@ use Illuminate\Notifications\ChannelManager;
 use Illuminate\Routing\Route as RouteInstance;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\Compilers\BladeCompiler;
 use MyComm\Client;
 use MyComm\Exceptions\MyCommException;
 use MyComm\Laravel\Console\VerifyCommand;
 use MyComm\Laravel\Http\Controllers\WebhookController;
 use MyComm\Laravel\Http\Middleware\VerifyWebhookSignature;
 use MyComm\Laravel\Notifications\MyCommChannel;
+use MyComm\Laravel\View\Components\Connect;
 
 final class MyCommServiceProvider extends ServiceProvider
 {
@@ -49,6 +51,11 @@ final class MyCommServiceProvider extends ServiceProvider
         // `via()` may return 'mycomm' once the notifications component is loaded.
         $this->callAfterResolving(ChannelManager::class, function (ChannelManager $manager, Application $app): void {
             $manager->extend('mycomm', fn (): MyCommChannel => $app->make(MyCommChannel::class));
+        });
+
+        // <x-mycomm-connect :line="$lineId" purpose="connect" /> renders the connect widget with a fresh hosted link.
+        $this->callAfterResolving(BladeCompiler::class, function (BladeCompiler $blade): void {
+            $blade->component('mycomm-connect', Connect::class);
         });
 
         if ($this->app->runningInConsole()) {
