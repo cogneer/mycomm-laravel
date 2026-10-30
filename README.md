@@ -42,7 +42,8 @@ Check the setup once it is in place:
 php artisan mycomm:verify --to=+923001234567
 ```
 
-Add `--line=<line id>` when the key can use several lines.
+Add `--line=<line id>` when the key can use several lines. A partner key (`mc_partner_...`) is checked on the partner
+API, and its send is dry-run through the line given with `--line`, which it needs.
 
 It checks the key and dry-runs a message to that number, sends nothing, prints each check as `PASS` or `FAIL` with the
 API's own message, and exits with code 1 when one fails, so it can sit in a deploy script. See
@@ -96,6 +97,12 @@ page's origin, so the hosted page returns here and reports its outcome only to t
 (default), `add_channel`, `replace_device` (with `:replaces-device="$deviceId"`, the phone being replaced), `manage` or
 `claim`. A partner key needs `:line`, one of its lines; an account key may leave it out when the key
 reaches a single line. Every other attribute (`mode`, `label`, `height`, `timeout`, `class`) goes to the element.
+
+A new link is made on every render, so mind the API's limits: at most 20 open links per line and 60 new ones per line per
+hour, and `return_url` must be `https`. When MyComm refuses the link or cannot be reached, the page still renders: the
+element comes without a `url`, so the widget shows its own `missing-url` error, and the reason is logged as a warning
+("MyComm did not create the connect link: ..."). A missing `:line` with a partner key is a mistake in your template and
+still throws.
 
 Load the widget's script on the page (see its README for the pinned CDN tag with its integrity hash), and listen for
 `mycomm-connect:completed`; confirm on your server with `MyComm::partner()->lines->status($lineId)` or the `line.*`

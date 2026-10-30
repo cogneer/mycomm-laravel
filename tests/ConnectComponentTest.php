@@ -3,12 +3,14 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\View\ViewException;
 use MyComm\Exceptions\MyCommException;
 use MyComm\Http\Request;
 use MyComm\Laravel\Facades\MyComm;
 use MyComm\Testing\Examples;
+use MyComm\Testing\FakeResponse;
 
 beforeEach(function () {
     Route::get('settings/messaging', fn () => Blade::render(request()->query('blade', '<x-mycomm-connect :line="$lineId" purpose="connect" />'), ['lineId' => 'line-1']));
@@ -74,12 +76,29 @@ it('makes the link with an account key on the given line, or on its only line', 
 
     $this->get('https://app.test/settings/messaging')->assertOk();
     $this->get('https://app.test/settings/messaging?'.http_build_query(['blade' => '<x-mycomm-connect />']))->assertOk();
+    $this->get('https://app.test/settings/messaging?'.http_build_query(['blade' => '<x-mycomm-connect line="" />']))->assertOk();
 
+    $only = '/v1/lines/'.Examples::RESPONSES['lines.get']['body']['id'].'/links';
     $calls = $fake->calls('lines.links.create');
-    expect($calls)->toHaveCount(2)
+    expect($calls)->toHaveCount(3)
         ->and($calls[0]->path)->toBe('/v1/lines/line-1/links')
         ->and($calls[0]->header('MyComm-Line'))->toBeNull()
-        ->and($calls[1]->path)->toBe('/v1/lines/'.Examples::RESPONSES['lines.get']['body']['id'].'/links')
-        ->and($calls[1]->json['purpose'])->toBe('connect');
+        ->and($calls[1]->path)->toBe($only)
+        ->and($calls[1]->json['purpose'])->toBe('connect')
+        ->and($calls[2]->path)->toBe($only);
     $fake->assertNotCalled('partner.lines.links.create');
+});
+
+it('renders the element without a link and logs why when the API refuses the link', function () {
+    config(['mycomm.api_key' => 'mc_partner_test']);
+    $fake = MyComm::fake();
+    $fake->respond('partner.lines.links.create', FakeResponse::error(422, 'CONNECT_SESSION_LIMIT_REACHED', 'Too many open links for this line.'));
+    Log::spy();
+
+    $html = $this->get('https://erp.test/settings/messaging')->assertOk()->getContent();
+
+    expect($html)->toContain('<mycomm-connect purpose="connect"')
+        ->and($html)->not->toContain('url=');
+    Log::shouldHaveReceived('warning')->once()->withArgs(fn (string $message, array $context) => str_contains($message, 'Too many open links for this line.')
+        && $context['line'] === 'line-1' && $context['purpose'] === 'connect');
 });

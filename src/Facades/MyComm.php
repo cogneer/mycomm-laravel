@@ -53,7 +53,9 @@ final class MyComm extends Facade
      */
     public static function fake(): MyCommFake
     {
-        $fake = new MyCommFake;
+        // A partner key in the configuration gets a partner fake, so code that branches on the key kind runs as in production.
+        $configured = self::getFacadeApplication()?->make('config')->get('mycomm.api_key');
+        $fake = new MyCommFake(is_string($configured) && str_starts_with($configured, 'mc_partner_') ? 'mc_partner_fake' : 'mc_live_fake');
 
         self::getFacadeApplication()?->instance(Client::class, $fake->client());
         self::swap(new MyCommManager($fake->client()));

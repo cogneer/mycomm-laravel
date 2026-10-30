@@ -24,7 +24,11 @@ Nothing from 1.x is kept as an alias.
   made for the page view (`return_url` the current URL, `allowed_origins` the page's origin). A partner key needs
   `:line`; an account key may leave it out when it reaches one line. `purpose` is `connect`, `add_channel`,
   `replace_device` (with `:replaces-device`), `manage` or `claim`; other attributes go to the element.
-  `MyComm::fake()` covers it.
+  `MyComm::fake()` covers it. When the API refuses the link, the element renders without a `url` and a warning is logged,
+  instead of the page failing.
+- `php artisan mycomm:verify` and `MyComm::verify()` work with a partner key: the key is checked on the partner API and
+  the send dry-run through `--line`.
+- `MyComm::fake()` fakes a partner key when `mycomm.api_key` is one.
 - Requires `illuminate/view`, for the component.
 
 ## [1.0.0] - 2026-10-26
