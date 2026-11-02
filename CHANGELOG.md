@@ -20,6 +20,8 @@ Nothing from 1.x is kept as an alias.
 
 ### Added
 
+- `MyCommMessage::prefer('whatsapp')`: the channel type the line tries first for this message (`sms` or `whatsapp`,
+  or a `MyComm\Enums\MessagePrefer`); it beats the line's own preference.
 - `<x-mycomm-connect :line="$lineId" purpose="connect" />`: renders the `@mycomm/connect` widget with a hosted link
   made for the page view (`return_url` the current URL, `allowed_origins` the page's origin). A partner key needs
   `:line`; an account key may leave it out when it reaches one line. `purpose` is `connect`, `add_channel`,

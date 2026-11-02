@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification as NotificationFacade;
+use MyComm\Enums\MessagePrefer;
 use MyComm\Exceptions\UnprocessableException;
 use MyComm\Http\Request;
 use MyComm\Laravel\Events\MyCommNotificationFailed;
@@ -107,6 +108,17 @@ it('builds the arguments of a send and leaves out what was not set', function ()
         'expires_in' => 600,
         'dry_run' => true,
     ]);
+});
+
+it('asks the line to try a channel type first', function () {
+    $message = MyCommMessage::create('Hi')->to('+923001234567')->prefer(MessagePrefer::Whatsapp);
+
+    expect($message->toArray())->toBe([
+        'to' => '+923001234567',
+        'body' => 'Hi',
+        'prefer' => MessagePrefer::Whatsapp,
+    ]);
+    expect(MyCommMessage::create('Hi')->prefer('sms')->toArray()['prefer'])->toBe('sms');
 });
 
 it('sends from the line it is given', function () {

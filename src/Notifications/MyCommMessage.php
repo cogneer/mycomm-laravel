@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MyComm\Laravel\Notifications;
 
 use DateTimeInterface;
+use MyComm\Enums\MessagePrefer;
 
 /**
  * The text message a notification sends through MyComm, built fluently in `toMyComm()`:
@@ -35,6 +36,8 @@ final class MyCommMessage
     private ?string $category = null;
 
     private ?string $lane = null;
+
+    private MessagePrefer|string|null $prefer = null;
 
     private ?string $referenceId = null;
 
@@ -117,6 +120,14 @@ final class MyCommMessage
         return $this;
     }
 
+    /** The channel type to try first (`sms` or `whatsapp`) when the line picks the sender; beats the line's own preference. */
+    public function prefer(MessagePrefer|string $prefer): self
+    {
+        $this->prefer = $prefer;
+
+        return $this;
+    }
+
     public function referenceId(string $referenceId): self
     {
         $this->referenceId = $referenceId;
@@ -183,6 +194,7 @@ final class MyCommMessage
             'variables' => $this->variables,
             'category' => $this->category,
             'lane' => $this->lane,
+            'prefer' => $this->prefer,
             'reference_id' => $this->referenceId,
             'metadata' => $this->metadata,
             'send_after' => $this->sendAfter,

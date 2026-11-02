@@ -150,7 +150,7 @@ $customer->notify(new OrderShipped($order));
 ```
 
 The number comes from `routeNotificationForMyComm()` on the notifiable, else its `phone` attribute; a notifiable with no
-number is skipped. `MyCommMessage` also has `contactId()`, `line()`, `template()`, `lane()`, `metadata()`, `sendAfter()`,
+number is skipped. `MyCommMessage` also has `contactId()`, `line()`, `template()`, `lane()`, `prefer()`, `metadata()`, `sendAfter()`,
 `expiresIn()` and `dryRun()`; it takes the same values as `messages->send()`.
 
 The notification's id is sent as the `Idempotency-Key`, so a queued notification that is retried cannot send twice. When
