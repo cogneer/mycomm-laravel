@@ -4,7 +4,7 @@ All notable changes to this package are listed here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the package follows
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0] - Unreleased
+## [2.0.0] - 2026-11-02
 
 For `mycomm/mycomm-php` 2.0 and the API `2.0.0`, where lines replace inboxes and partners give each user a line.
 Nothing from 1.x is kept as an alias.
