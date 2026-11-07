@@ -15,7 +15,7 @@ use MyComm\Exceptions\MyCommException;
 /**
  * `<x-mycomm-connect :line="$lineId" purpose="connect" />`: the `@mycomm/connect` widget with a hosted link made for
  * this page view. The link returns to the current URL and reports only to this page's origin. A partner key needs
- * `:line` (one of its lines); an account key may leave it out when it reaches a single line. `purpose="replace_device"`
+ * `:line` (one of its lines); a user key may leave it out when it reaches a single line. `purpose="replace_device"`
  * needs `:replaces-device` (the phone being replaced). Any other attribute (`mode`, `label`, `height`, `timeout`,
  * `class`, ...) is passed to the element. Load the widget's script on the page.
  *

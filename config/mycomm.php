@@ -5,7 +5,7 @@ declare(strict_types=1);
 return [
 
     /*
-    | An account key (mc_live_...) or a partner key (mc_partner_...), created in the MyComm portal under
+    | A user key (mc_live_...) or a partner key (mc_partner_...), created in the MyComm portal under
     | Developers > API keys. Keep it out of version control.
     */
     'api_key' => env('MYCOMM_API_KEY'),

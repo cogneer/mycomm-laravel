@@ -18,7 +18,7 @@ it('passes when the key works and a dry run is accepted', function () {
 });
 
 it('exits 1 and says why when the key is refused', function () {
-    MyComm::fake()->respond('account.get', FakeResponse::error(401, 'UNAUTHENTICATED', 'The API key is not valid.'));
+    MyComm::fake()->respond('me.get', FakeResponse::error(401, 'UNAUTHENTICATED', 'The API key is not valid.'));
 
     $this->artisan('mycomm:verify', ['--to' => '+923001234567'])
         ->expectsOutputToContain('FAIL  key: The API key is not valid.')
@@ -55,14 +55,14 @@ it('dry-runs the send from the line given with --line', function () {
 it('verifies a partner key on the partner API and dry-runs through --line', function () {
     config(['mycomm.api_key' => 'mc_partner_test']);
     $fake = MyComm::fake();
-    $fake->respond('account.get', FakeResponse::error(403, 'PARTNER_ROUTE_NOT_ALLOWED', 'A partner key cannot use this route.'));
+    $fake->respond('me.get', FakeResponse::error(403, 'PARTNER_ROUTE_NOT_ALLOWED', 'A partner key cannot use this route.'));
 
     $this->artisan('mycomm:verify', ['--to' => '+923001234567', '--line' => '0198f3a2-7c41-7e0b-9d52-6a1f3b8c4e12'])
         ->expectsOutputToContain('PASS  key: The partner key works.')
         ->expectsOutputToContain('PASS  send')
         ->assertSuccessful();
 
-    $fake->assertNotCalled('account.get')
+    $fake->assertNotCalled('me.get')
         ->assertCalled('partner.lines.list')
         ->assertCalled('messages.send', fn ($request) => $request->header('MyComm-Line') === '0198f3a2-7c41-7e0b-9d52-6a1f3b8c4e12');
 });

@@ -27,7 +27,7 @@ else.
 
 | Environment variable | Default | What it does |
 |---|---|---|
-| `MYCOMM_API_KEY` | none, required | An account key (`mc_live_...`) or a partner key (`mc_partner_...`) |
+| `MYCOMM_API_KEY` | none, required | A user key (`mc_live_...`) or a partner key (`mc_partner_...`) |
 | `MYCOMM_BASE_URL` | `https://mycomm.cogneer.tech` | Origin of the API, without `/v1`; change it only to reach staging |
 | `MYCOMM_MAX_RETRIES` | `2` | Retries after a network error, a 429 or a 5xx. Sends carry an idempotency key, so a retry never sends twice |
 | `MYCOMM_TIMEOUT` | `30` | Seconds per attempt |
@@ -95,7 +95,7 @@ link made for this page view:
 It creates the link when the page renders, with `return_url` set to the current URL and `allowed_origins` to this
 page's origin, so the hosted page returns here and reports its outcome only to this page. `purpose` is `connect`
 (default), `add_channel`, `replace_device` (with `:replaces-device="$deviceId"`, the phone being replaced), `manage` or
-`claim`. A partner key needs `:line`, one of its lines; an account key may leave it out when the key
+`claim`. A partner key needs `:line`, one of its lines; a user key may leave it out when the key
 reaches a single line. Every other attribute (`mode`, `label`, `height`, `timeout`, `class`) goes to the element.
 
 A new link is made on every render, so mind the API's limits: at most 20 open links per line and 60 new ones per line per
@@ -250,7 +250,7 @@ it('copes with a customer who opted out', function () {
 ```
 
 `MyComm::fake()` replaces the client for the facade and for injection, `<x-mycomm-connect>` included (its link is
-`partner.lines.links.create`, or `lines.links.create` with an account key). Nothing reaches the network; every
+`partner.lines.links.create`, or `lines.links.create` with a user key). Nothing reaches the network; every
 operation answers with the example of the API reference unless you stub it.
 
 To test your own listener end to end, post a signed delivery to the route:

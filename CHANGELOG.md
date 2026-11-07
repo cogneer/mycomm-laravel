@@ -17,6 +17,7 @@ Nothing from 1.x is kept as an alias.
 - The facade documents `lines()` instead of `inboxes()`.
 - `MyComm::forLine($lineId)` replaces `forAccount()`: a partner key sends as one of its lines (`MyComm-Line`).
 - The facade no longer documents `connectSessions()`, which the SDK removed; it documents `links()`.
+- The facade documents `me()` (`GET`/`PATCH /v1/me`) instead of `account()`, as the SDK renamed it.
 
 ### Added
 
@@ -24,7 +25,7 @@ Nothing from 1.x is kept as an alias.
   or a `MyComm\Enums\MessagePrefer`); it beats the line's own preference.
 - `<x-mycomm-connect :line="$lineId" purpose="connect" />`: renders the `@mycomm/connect` widget with a hosted link
   made for the page view (`return_url` the current URL, `allowed_origins` the page's origin). A partner key needs
-  `:line`; an account key may leave it out when it reaches one line. `purpose` is `connect`, `add_channel`,
+  `:line`; a user key may leave it out when it reaches one line. `purpose` is `connect`, `add_channel`,
   `replace_device` (with `:replaces-device`), `manage` or `claim`; other attributes go to the element.
   `MyComm::fake()` covers it. When the API refuses the link, the element renders without a `url` and a warning is logged,
   instead of the page failing.

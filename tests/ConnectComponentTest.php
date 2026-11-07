@@ -70,7 +70,7 @@ it('needs a line with a partner key', function () {
     $fake->assertNothingCalled();
 });
 
-it('makes the link with an account key on the given line, or on its only line', function () {
+it('makes the link with a user key on the given line, or on its only line', function () {
     $fake = MyComm::fake();
     $fake->respond('lines.list', ['data' => [Examples::RESPONSES['lines.get']['body']], 'next_cursor' => null]);
 
