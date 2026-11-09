@@ -4,6 +4,22 @@ All notable changes to this package are listed here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the package follows
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-11-09
+
+For `mycomm/mycomm-php` 2.1. Published 2.0.0 still used `account_id` and `default_line_id`; the SDK now follows the
+API and renames them, so code that reads either field has to change when it moves to 2.1.0.
+
+### Changed
+
+- Requires `mycomm/mycomm-php` `^2.1`.
+- `account_id` is now `user_id`. The facade documents `me()` (`GET`/`PATCH /v1/me`) instead of `account()`, as the SDK
+  renamed it.
+- `default_line_id` is now `direct_line_id`: every number has its own direct line.
+- A direct line sends only through its own number: setting any other senders on it, or switching its own number off
+  or turning `mirror_inbound` on, answers `409 INVALID_STATE`.
+- `from` prefers the live number: when the number also has a disconnected copy, the live one sends; `LINE_ARCHIVED`
+  answers only when no live copy exists.
+
 ## [2.0.0] - 2026-11-02
 
 For `mycomm/mycomm-php` 2.0 and the API `2.0.0`, where lines replace inboxes and partners give each user a line.
@@ -17,7 +33,6 @@ Nothing from 1.x is kept as an alias.
 - The facade documents `lines()` instead of `inboxes()`.
 - `MyComm::forLine($lineId)` replaces `forAccount()`: a partner key sends as one of its lines (`MyComm-Line`).
 - The facade no longer documents `connectSessions()`, which the SDK removed; it documents `links()`.
-- The facade documents `me()` (`GET`/`PATCH /v1/me`) instead of `account()`, as the SDK renamed it.
 
 ### Added
 
@@ -25,7 +40,7 @@ Nothing from 1.x is kept as an alias.
   or a `MyComm\Enums\MessagePrefer`); it beats the line's own preference.
 - `<x-mycomm-connect :line="$lineId" purpose="connect" />`: renders the `@mycomm/connect` widget with a hosted link
   made for the page view (`return_url` the current URL, `allowed_origins` the page's origin). A partner key needs
-  `:line`; a user key may leave it out when it reaches one line. `purpose` is `connect`, `add_channel`,
+  `:line`; an account key may leave it out when it reaches one line. `purpose` is `connect`, `add_channel`,
   `replace_device` (with `:replaces-device`), `manage` or `claim`; other attributes go to the element.
   `MyComm::fake()` covers it. When the API refuses the link, the element renders without a `url` and a warning is logged,
   instead of the page failing.

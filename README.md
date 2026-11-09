@@ -13,8 +13,9 @@ Requires PHP 8.2+ and Laravel 12 or 13. The guide for this package, with the API
 composer require mycomm/mycomm-laravel
 ```
 
-Release status: `1.0.x` is published on Packagist. `2.0.0` (lines replace inboxes, for `mycomm/mycomm-php` 2.0) is not
-published yet; until it is, `composer require` installs `1.0.x`.
+Release status: `2.0.0` (lines replace inboxes, for `mycomm/mycomm-php` 2.0) is published on Packagist. `2.1.0` (for
+`mycomm/mycomm-php` 2.1, where `account_id` is `user_id` and `default_line_id` is `direct_line_id`) is not published
+yet; until it is, `composer require` installs `2.0.0`.
 
 ```dotenv
 MYCOMM_API_KEY=mc_live_...
