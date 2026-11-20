@@ -4,6 +4,24 @@ All notable changes to this package are listed here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the package follows
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-11-21
+
+For `mycomm/mycomm-php` 2.2 and the API `2.1.0`: WhatsApp numbers, linked as a device of the phone, through the same
+channel endpoints as every other type.
+
+### Added
+
+- Through the SDK: `MyComm::channels()->create(type: 'whatsapp_web', connect: ...)`, `connectState($id)` and the new
+  `continueConnect($id, action: 'retry' | 'switch_method' | 'relink')`; the error codes `CHANNEL_LIMIT_REACHED`,
+  `CHANNEL_LINK_BLOCKED`, `CHANNEL_LINK_BUSY`, `CHANNEL_NO_CAPACITY`, `CHANNEL_SERVER_UNAVAILABLE` and
+  `CHANNEL_NUMBER_IN_USE`; `channel_options` keyed by channel type; media uploads of more types.
+
+### Changed
+
+- Requires `mycomm/mycomm-php` `^2.2`.
+- The channel type `whatsapp_evolution` is now `whatsapp_web`. It was a reserved value that the API never offered.
+- `429 CHANNEL_LINK_BLOCKED` is thrown at once instead of being retried: the block lasts minutes or hours.
+
 ## [2.1.0] - 2026-11-09
 
 For `mycomm/mycomm-php` 2.1. Published 2.0.0 still used `account_id` and `default_line_id`; the SDK now follows the
