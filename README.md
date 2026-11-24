@@ -15,7 +15,8 @@ composer require mycomm/mycomm-laravel
 
 Release status: `2.1.0` (for `mycomm/mycomm-php` 2.1, where `account_id` is `user_id` and `default_line_id` is
 `direct_line_id`) is published on Packagist. `2.2.0` (for `mycomm/mycomm-php` 2.2 and the API `2.1.0`, with WhatsApp
-numbers) is not published yet; until it is, `composer require` installs `2.1.0`.
+numbers) and `2.3.0` (for `mycomm/mycomm-php` 2.3 and the API `2.2.0`, with the link's `step`) are not published yet;
+until they are, `composer require` installs `2.1.0`.
 
 ```dotenv
 MYCOMM_API_KEY=mc_live_...
@@ -107,7 +108,8 @@ still throws.
 
 Load the widget's script on the page (see its README for the pinned CDN tag with its integrity hash), and listen for
 `mycomm-connect:completed`; confirm on your server with `MyComm::partner()->lines->status($lineId)` or the `line.*`
-webhooks. The link is a credential for the line: the component never caches or logs it, and neither should you.
+webhooks. To show progress, `@mycomm/connect` 1.2 fires `mycomm-connect:step` with the step the card is on, and
+`MyComm::partner()->links->get($id)->step` says the same on your server (`open:pair`, `completed`, ...). The link is a credential for the line: the component never caches or logs it, and neither should you.
 
 In a queued job, give the send an idempotency key derived from your own data, so a retried job cannot send
 twice:

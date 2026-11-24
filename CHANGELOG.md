@@ -4,6 +4,20 @@ All notable changes to this package are listed here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the package follows
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-11-24
+
+For `mycomm/mycomm-php` 2.3 and the API `2.2.0`: a hosted link says which step the connect card is on. Only adds.
+
+### Added
+
+- Through the SDK: `step` on the links that `MyComm::links()->get($id)` and `MyComm::partner()->links->get($id)` return
+  (`open:<step>` while the card is open, `completed`, `revoked`, `expired`, or `null` before anyone opened it).
+- README: the widget's `mycomm-connect:step` event (`@mycomm/connect` 1.2) next to `<x-mycomm-connect>`.
+
+### Changed
+
+- Requires `mycomm/mycomm-php` `^2.3`.
+
 ## [2.2.0] - 2026-11-21
 
 For `mycomm/mycomm-php` 2.2 and the API `2.1.0`: WhatsApp numbers, linked as a device of the phone, through the same
